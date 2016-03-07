@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tofikowy zegarek</title>
+    <meta charset="utf-8" />
+    <link type="text/css" rel="stylesheet" href="zegarki.css" />
+  </head>
+  <body>
+    <div id="zegary">
+      <div id="analogowy">
+        <div id="tarcza">
+          <img src="tarcza.png" />
+        </div>
+        <div id="godzina">
+          <img src="godzina.png" />
+        </div>
+        <div id="minuta">
+          <img src="minuta.png" />
+        </div>
+        <div id="sekunda">
+          <img src="sekunda.png" />
+        </div>
+      </div>
+      <div id="cyfrowy">
+        <span id="hour"></span><span id="ss">:</span><span id="min"></span><span id="sec"></span>
+      </div>
+    </div>
+    <div>
+      <select id="whattype">
+        <option value="analog">Analogowy</option>
+        <option value="cyfro">Cyfrowy</option>
+      </select>
+      <select id="format">
+        <option value="24">24h</option>
+        <option value="12">12h</option>
+      </select>
+      <div id="ifsekblock">
+        <input id="ifsek" type="checkbox" name="sekundy" checked />
+        <span>Pokaż sekundy</span>
+      </div>
+    </div>
+    <h1>Jest
+      <span id="Dzien"></span>,
+      <span id="Data"></span>.</h1>
+      <script type="text/javascript" src="zegarki.js"></script>
+  </body>
+</html>

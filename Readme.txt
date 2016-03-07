@@ -1,0 +1,1 @@
+png files taken from http://tmall.com.pl/zegar-analogowy-javascript/

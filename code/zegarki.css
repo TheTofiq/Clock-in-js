@@ -1,0 +1,62 @@
+body {
+  background-color: black;
+  color:gray;
+  font-family:fantasy;
+}
+
+#zegary {
+  width: 100%;
+  height: 170px;
+}
+
+#cyfrowy{
+  display: none;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 150px;
+  font-size: 30px;
+  color: #07DE00;
+  width: 150px;
+  height: 150px;
+  /*border: 1px dashed #07DE00*/
+}
+
+#analogowy {
+  float: left;
+  overflow: hidden;
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+}
+
+#tarcza {
+  position: absolute;
+}
+#godzina {
+  position: absolute;
+  z-index: 2;
+}
+#sekunda {
+  position: absolute;
+  z-index: 3;
+}
+#minuta {
+  position: absolute;
+  z-index: 1;
+}
+
+#sec {
+  font-size: 20px;
+}
+
+h1 {
+  color: #07DE00;
+}
+
+#ifsekblock {
+  display: none;
+}
+
+#format {
+  display: none;
+}
