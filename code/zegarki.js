@@ -247,21 +247,35 @@
 
   function timeButton1() {
     var pinput = document.querySelector('#gettime1').value;
-    result = getTime1(pinput);
+    var result = getTime1(pinput);
     document.querySelector('#gettime1result').innerHTML = result;
   }
 
   function timeButton2() {
     var pinput = document.querySelector('#gettime2').value;
-    result = getTime2(pinput);
+    var result = getTime2(pinput);
     document.querySelector('#gettime2result').innerHTML = result;
   }
 
+  function getDate1(input) {
+    var date = new Date();
+    var month = formatTest(date.getMonth());
+    var day = formatTest(date.getDate());
+    var wday = dayName(date.getDay());
+    var year = date.getFullYear().toString();
+
+    var result = input.replace(/MM/g, month);
+    result = result.replace(/DD/g, day);
+    result = result.replace(/WD/g, wday);
+    result = result.replace(/YYYY/g, year);
+    result = result.replace(/YY/g, year.substr(2, year.length));
+    return result;
+  }
 
   function dateButton() {
     var pinput = document.querySelector('#getdate').value;
-
-    document.querySelector('#getdateresult').innerHTML = pinput;
+    var result = getDate1(pinput);
+    document.querySelector('#getdateresult').innerHTML = result;
   }
 
   document.addEventListener('DOMContentLoaded', main);
