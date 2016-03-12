@@ -96,6 +96,8 @@
     document.querySelector('#ifsek').addEventListener('change', ifsekHandler);
     document.querySelector('#whattype').addEventListener('change', typeHandler);
     document.querySelector('#format').addEventListener('change', formatHandler);
+    document.querySelector('#getdatebutton').addEventListener('click', dateButton);
+    document.querySelector('#gettimebutton').addEventListener('click', timeButton);
     updateTime();
   }
 
@@ -131,6 +133,111 @@
       ifsek.style = 'display: inline-block';
       pformat.style = 'display: inline-block';
     }
+  }
+
+  function parseFormat(param) {
+    var resulttable = [];
+    var i;
+
+    i = param.indexOf('h');
+    if (i + 1) {
+      resulttable[i] = 'h';
+    }
+
+    i = param.indexOf('m');
+    if (i + 1) {
+      resulttable[i] = 'm';
+    }
+
+    i = param.indexOf('s');
+    if (i + 1) {
+      resulttable[i] = 's';
+    }
+
+    i = param.indexOf('p');
+    if (i + 1) {
+      resulttable[i] = 'p';
+    }
+    return resulttable;
+  }
+
+  function getSeparator(param) {
+    if (param.includes(':')) {
+      return ':';
+    }
+    if (param.includes(';')) {
+      return ';';
+    }
+    if (param.includes('.')) {
+      return '.';
+    }
+    if (param.includes('/')) {
+      return '/';
+    }
+    if (param.includes('|')) {
+      return '|';
+    }
+    if (param.includes(' ')) {
+      return ' ';
+    }
+    return '';
+  }
+
+  function getTime1(param) {
+    var date = new Date();
+    var hours = formatTest(date.getHours());
+    var mins = formatTest(date.getMinutes());
+    var secs = formatTest(date.getSeconds());
+    var msecs = formatTest(date.getMilliseconds());
+
+    if (param === '') {
+      return date.getTime();
+    } else {
+      var format = parseFormat(param);
+      if (format.length === 0) {
+        return hours + ':' + mins + ':' + secs;
+      } else {
+        var separator = getSeparator(param);
+        var result = '';
+        for (var i = 0; i < format.length; i++) {
+          switch (format[i]) {
+            case 'h':
+              result += hours + separator;
+              break;
+            case 'm':
+              result += mins + separator;
+              break;
+            case 's':
+              result += secs + separator;
+              break;
+            case 'p':
+              result += msecs + separator;
+              break;
+            default:
+              break;
+          }
+        }
+        if (separator.length === 0) {
+          return result;
+
+        } else {
+          return result.substr(0, result.length - 1);
+        }
+      }
+    }
+  }
+
+  function timeButton() {
+    var pinput = document.querySelector('#gettime').value;
+    result = getTime1(pinput);
+    document.querySelector('#gettimeresult').innerHTML = result;
+  }
+
+
+  function dateButton() {
+    var pinput = document.querySelector('#getdate').value;
+
+    document.querySelector('#getdateresult').innerHTML = pinput;
   }
 
   document.addEventListener('DOMContentLoaded', main);
