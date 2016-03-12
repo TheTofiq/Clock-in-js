@@ -79,7 +79,7 @@
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
 
-    document.querySelector('#Data').innerHTML = day + '-' + month + '-' + year;
+    document.querySelector('#Data').innerHTML = formatTest(day) + '-' + formatTest(month) + '-' + year;
     document.querySelector('#Dzien').innerHTML = dayName(wday);
 
     if (document.querySelector('#format').value === '12') {
