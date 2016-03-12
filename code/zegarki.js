@@ -97,7 +97,8 @@
     document.querySelector('#whattype').addEventListener('change', typeHandler);
     document.querySelector('#format').addEventListener('change', formatHandler);
     document.querySelector('#getdatebutton').addEventListener('click', dateButton);
-    document.querySelector('#gettimebutton').addEventListener('click', timeButton);
+    document.querySelector('#gettime1button').addEventListener('click', timeButton1);
+    document.querySelector('#gettime2button').addEventListener('click', timeButton2);
     updateTime();
   }
 
@@ -227,10 +228,33 @@
     }
   }
 
-  function timeButton() {
-    var pinput = document.querySelector('#gettime').value;
+  function getTime2(input) {
+    var date = new Date();
+    var hours = formatTest(date.getHours());
+    var mins = formatTest(date.getMinutes());
+    var secs = formatTest(date.getSeconds());
+    var msecs = formatTest(date.getMilliseconds());
+    if (input.length === 0) {
+      return date.getTime();
+    } else {
+      var result = input.replace(/MM/g, mins);
+      result = result.replace(/HH/g, hours);
+      result = result.replace(/SS/g, hours);
+      result = result.replace(/MS/g, msecs);
+      return result;
+    }
+  }
+
+  function timeButton1() {
+    var pinput = document.querySelector('#gettime1').value;
     result = getTime1(pinput);
-    document.querySelector('#gettimeresult').innerHTML = result;
+    document.querySelector('#gettime1result').innerHTML = result;
+  }
+
+  function timeButton2() {
+    var pinput = document.querySelector('#gettime2').value;
+    result = getTime2(pinput);
+    document.querySelector('#gettime2result').innerHTML = result;
   }
 
 
