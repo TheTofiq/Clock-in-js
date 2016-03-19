@@ -239,7 +239,7 @@
     } else {
       var result = input.replace(/MM/g, mins);
       result = result.replace(/HH/g, hours);
-      result = result.replace(/SS/g, hours);
+      result = result.replace(/SS/g, secs);
       result = result.replace(/MS/g, msecs);
       return result;
     }
@@ -259,7 +259,7 @@
 
   function getDate1(input) {
     var date = new Date();
-    var month = formatTest(date.getMonth());
+    var month = formatTest(date.getMonth() + 1);
     var day = formatTest(date.getDate());
     var wday = dayName(date.getDay());
     var year = date.getFullYear().toString();
