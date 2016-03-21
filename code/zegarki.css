@@ -49,7 +49,7 @@ body {
   font-size: 20px;
 }
 
-h1 {
+h1, h2 {
   color: #07DE00;
 }
 
@@ -59,4 +59,14 @@ h1 {
 
 #format {
   display: none;
+}
+
+.result {
+  display: inline;
+  padding-left: 20px;
+  line-height: 50px;
+}
+
+button {
+  width: 100px;
 }

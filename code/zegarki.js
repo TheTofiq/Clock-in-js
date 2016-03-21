@@ -79,7 +79,7 @@
     var month = date.getMonth() + 1;
     var year = date.getFullYear();
 
-    document.querySelector('#Data').innerHTML = day + '-' + month + '-' + year;
+    document.querySelector('#Data').innerHTML = formatTest(day) + '-' + formatTest(month) + '-' + year;
     document.querySelector('#Dzien').innerHTML = dayName(wday);
 
     if (document.querySelector('#format').value === '12') {
@@ -96,6 +96,9 @@
     document.querySelector('#ifsek').addEventListener('change', ifsekHandler);
     document.querySelector('#whattype').addEventListener('change', typeHandler);
     document.querySelector('#format').addEventListener('change', formatHandler);
+    document.querySelector('#getdatebutton').addEventListener('click', dateButton);
+    document.querySelector('#gettime1button').addEventListener('click', timeButton1);
+    document.querySelector('#gettime2button').addEventListener('click', timeButton2);
     updateTime();
   }
 
@@ -131,6 +134,148 @@
       ifsek.style = 'display: inline-block';
       pformat.style = 'display: inline-block';
     }
+  }
+
+  function parseFormat(param) {
+    var resulttable = [];
+    var i;
+
+    i = param.indexOf('h');
+    if (i + 1) {
+      resulttable[i] = 'h';
+    }
+
+    i = param.indexOf('m');
+    if (i + 1) {
+      resulttable[i] = 'm';
+    }
+
+    i = param.indexOf('s');
+    if (i + 1) {
+      resulttable[i] = 's';
+    }
+
+    i = param.indexOf('p');
+    if (i + 1) {
+      resulttable[i] = 'p';
+    }
+    return resulttable;
+  }
+
+  function getSeparator(param) {
+    if (param.includes(':')) {
+      return ':';
+    }
+    if (param.includes(';')) {
+      return ';';
+    }
+    if (param.includes('.')) {
+      return '.';
+    }
+    if (param.includes('/')) {
+      return '/';
+    }
+    if (param.includes('|')) {
+      return '|';
+    }
+    if (param.includes(' ')) {
+      return ' ';
+    }
+    return '';
+  }
+
+  function getTime1(param) {
+    var date = new Date();
+    var hours = formatTest(date.getHours());
+    var mins = formatTest(date.getMinutes());
+    var secs = formatTest(date.getSeconds());
+    var msecs = formatTest(date.getMilliseconds());
+
+    if (param === '') {
+      return date.getTime();
+    } else {
+      var format = parseFormat(param);
+      if (format.length === 0) {
+        return hours + ':' + mins + ':' + secs;
+      } else {
+        var separator = getSeparator(param);
+        var result = '';
+        for (var i = 0; i < format.length; i++) {
+          switch (format[i]) {
+            case 'h':
+              result += hours + separator;
+              break;
+            case 'm':
+              result += mins + separator;
+              break;
+            case 's':
+              result += secs + separator;
+              break;
+            case 'p':
+              result += msecs + separator;
+              break;
+            default:
+              break;
+          }
+        }
+        if (separator.length === 0) {
+          return result;
+
+        } else {
+          return result.substr(0, result.length - 1);
+        }
+      }
+    }
+  }
+
+  function getTime2(input) {
+    var date = new Date();
+    var hours = formatTest(date.getHours());
+    var mins = formatTest(date.getMinutes());
+    var secs = formatTest(date.getSeconds());
+    var msecs = formatTest(date.getMilliseconds());
+    if (input.length === 0) {
+      return date.getTime();
+    } else {
+      var result = input.replace(/MM/g, mins);
+      result = result.replace(/HH/g, hours);
+      result = result.replace(/SS/g, secs);
+      result = result.replace(/MS/g, msecs);
+      return result;
+    }
+  }
+
+  function timeButton1() {
+    var pinput = document.querySelector('#gettime1').value;
+    var result = getTime1(pinput);
+    document.querySelector('#gettime1result').innerHTML = result;
+  }
+
+  function timeButton2() {
+    var pinput = document.querySelector('#gettime2').value;
+    var result = getTime2(pinput);
+    document.querySelector('#gettime2result').innerHTML = result;
+  }
+
+  function getDate1(input) {
+    var date = new Date();
+    var month = formatTest(date.getMonth() + 1);
+    var day = formatTest(date.getDate());
+    var wday = dayName(date.getDay());
+    var year = date.getFullYear().toString();
+
+    var result = input.replace(/MM/g, month);
+    result = result.replace(/DD/g, day);
+    result = result.replace(/WD/g, wday);
+    result = result.replace(/YYYY/g, year);
+    result = result.replace(/YY/g, year.substr(2, year.length));
+    return result;
+  }
+
+  function dateButton() {
+    var pinput = document.querySelector('#getdate').value;
+    var result = getDate1(pinput);
+    document.querySelector('#getdateresult').innerHTML = result;
   }
 
   document.addEventListener('DOMContentLoaded', main);
