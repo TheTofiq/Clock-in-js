@@ -1,5 +1,27 @@
 (function() {
-  var timeoutid;
+  var showColon = true;
+  var ui = {
+    hour: document.querySelector('#hour'),
+    min: document.querySelector('#min'),
+    sec: document.querySelector('#sec'),
+    asec: document.querySelector('#sekunda'),
+    ahour: document.querySelector('#godzina'),
+    amin: document.querySelector('#minuta'),
+    ctype: document.querySelector('#whattype'),
+    showsec: document.querySelector('#ifsek'),
+    format: document.querySelector('#format'),
+    getdateb: document.querySelector('#getdatebutton'),
+    gettimeb: document.querySelector('#gettimebutton'),
+    ss: document.querySelector('#ss'),
+    ddata: document.querySelector('#Data'),
+    dzien: document.querySelector('#Dzien'),
+    cyfrowy: document.querySelector('#cyfrowy'),
+    analogowy: document.querySelector('#analogowy'),
+    ifsek: document.querySelector('#ifsekblock'),
+    pformat: document.querySelector('#format'),
+    tresult: document.querySelector('#timeresult'),
+    tinput: document.querySelector('#timeinput')
+  };
 
   function dayName(daynumber) {
     switch (daynumber) {
@@ -22,28 +44,88 @@
     }
   }
 
-  function mryg() {
-    var x = document.querySelector('#ss');
-    if (x.innerHTML === ':') {
-      x.innerHTML = ' ';
+  function getTimeObject() {
+    var date = new Date();
+    var time = {
+      hours: date.getHours(),
+      mins: date.getMinutes(),
+      secs: date.getSeconds(),
+      msecs: date.getMilliseconds(),
+      since: date.getTime(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear(),
+      day: date.getDate(),
+      wday: date.getDay()
+    };
+    return time;
+  }
+
+  function formatAmPm(uiobj, number) {
+    if (uiobj.format.value === '12') {
+      number = number - (number > 12 ? 12 : 0);
+    }
+    return number;
+  }
+
+  function updateAndDisplayTime() {
+    var timeObj = getTimeObject();
+    if (ui.ctype.value === 'analog') {
+      updateAnalog(ui, formatAnalogData(timeObj.hours, timeObj.mins, timeObj.secs));
     } else {
-      x.innerHTML = ':';
+
+      updateDigital(ui, makeTwoDigits(formatAmPm(ui, timeObj.hours)), makeTwoDigits(timeObj.mins), makeTwoDigits(timeObj.secs));
+      showColon = mryg(ui.ss, showColon);
+    }
+    updateDate(ui, dayName(timeObj.wday), makeTwoDigits(timeObj.day), makeTwoDigits(timeObj.month), makeTwoDigits(timeObj.year));
+    timeoutid = setTimeout(updateAndDisplayTime, 500);
+  }
+
+  function updateDigital(uiObj, hour, min, sec) {
+    if (uiObj.hour.textContent !== hour) {
+      uiObj.hour.textContent = hour;
+    }
+    if (uiObj.min.textContent !== min) {
+      uiObj.min.textContent = min;
+    }
+    if (uiObj.sec.textContent !== sec) {
+      uiObj.sec.textContent = sec;
     }
   }
 
-  function formatTest(number) {
-    if (number < 10) {
-      return '0' + number;
-    } else {
-      return number;
+  function mryg(item, colon) {
+    item.style.opacity = colon ? 0.8 : 0.1;
+    return !colon;
+  }
+
+  function updateDate(uiobj, wday, day, month, year) {
+    var newtextdate = day + '-' + month + '-' + year;
+    if (uiobj.dzien.textContent !== wday) {
+      uiobj.dzien.textContent = wday;
+    }
+    if (uiobj.ddata.textContent !== newtextdate) {
+      uiobj.ddata.textContent = newtextdate;
     }
   }
 
-  function updateDigital(hour, min, sec) {
-    document.querySelector('#hour').innerHTML = formatTest(hour);
-    document.querySelector('#min').innerHTML = formatTest(min);
-    document.querySelector('#sec').innerHTML = formatTest(sec);
-    mryg();
+  function makeTwoDigits(number) {
+    return (number < 10 ? '0' : '') + number;
+  }
+
+  function formatAnalogData(hour, min, sec) {
+    sec = sec * 6;
+    hour = 30 * (hour % 12) + min * 0.5;
+    min = min * 6;
+    return {
+      sec: sec,
+      hour: hour,
+      min: min
+    };
+  }
+
+  function updateAnalog(uiObj, time) {
+    rotate(uiObj.asec, time.sec);
+    rotate(uiObj.ahour, time.hour);
+    rotate(uiObj.amin, time.min);
   }
 
   function rotate(what, value) {
@@ -54,228 +136,56 @@
     what.style.Transform = 'rotate(' + value + 'deg)';
   }
 
-  function updateAnalog(hour, min, sec) {
-    var psec = document.querySelector('#sekunda');
-    sec = sec * 6;
-    rotate(psec, sec);
-
-    var phour = document.querySelector('#godzina');
-    hour = 30 * (hour % 12) + min * 0.5;
-    rotate(phour, hour);
-
-    var pmin = document.querySelector('#minuta');
-    min = min * 6;
-    rotate(pmin, min);
-
+  function ifsekHandler() {
+    if (this.checked === false) {
+      ui.sec.style = 'visibility: hidden';
+    } else {
+      ui.sec.style = 'visibility: visible';
+    }
   }
 
-  function updateTime() {
-    var date = new Date();
-    var hour = date.getHours();
-    var min = date.getMinutes();
-    var sec = date.getSeconds();
-    var wday = date.getDay();
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-
-    document.querySelector('#Data').innerHTML = formatTest(day) + '-' + formatTest(month) + '-' + year;
-    document.querySelector('#Dzien').innerHTML = dayName(wday);
-
-    if (document.querySelector('#format').value === '12') {
-      hour = hour % 12;
+  function typeHandler() {
+    if (this.value === 'analog') {
+      ui.cyfrowy.style = 'display: none';
+      ui.ifsek.style = 'display: none';
+      ui.analogowy.style = 'display: inline-block';
+      ui.pformat.style = 'display: none';
+    } else {
+      ui.cyfrowy.style = 'display: inline-block';
+      ui.analogowy.style = 'display: none';
+      ui.ifsek.style = 'display: inline-block';
+      ui.pformat.style = 'display: inline-block';
     }
+  }
 
-    updateDigital(hour, min, sec);
-    updateAnalog(hour, min, sec);
-    timeoutid = setTimeout(updateTime, 500);
+  function timeButtonHandler() {
+    var time = getTimeObject();
+    ui.tresult.textContent = stringToTime(ui.tinput.value, time);
+  }
+
+  function stringToTime(string, timeObj) {
+    if (string.length === 0) {
+      return timeObj.since;
+    } else {
+      return string
+        .replace(/MM/g, makeTwoDigits(timeObj.mins))
+        .replace(/HH/g, makeTwoDigits(timeObj.hours))
+        .replace(/SS/g, makeTwoDigits(timeObj.secs))
+        .replace(/MS/g, makeTwoDigits(timeObj.msecs))
+        .replace(/YYYY/g, timeObj.year)
+        .replace(/YY/g, timeObj.year.toString().substr(2, timeObj.year.toString().length))
+        .replace(/MO/g, makeTwoDigits(timeObj.month))
+        .replace(/DD/g, makeTwoDigits(timeObj.day))
+        .replace(/WD/g, dayName(timeObj.wday));
+    }
   }
 
   function main() {
-    document.querySelector('#whattype').value = 'analog';
-    document.querySelector('#ifsek').addEventListener('change', ifsekHandler);
-    document.querySelector('#whattype').addEventListener('change', typeHandler);
-    document.querySelector('#format').addEventListener('change', formatHandler);
-    document.querySelector('#getdatebutton').addEventListener('click', dateButton);
-    document.querySelector('#gettime1button').addEventListener('click', timeButton1);
-    document.querySelector('#gettime2button').addEventListener('click', timeButton2);
-    updateTime();
-  }
-
-  function ifsekHandler() {
-    pdsec = document.querySelector('#sec');
-    if (this.checked === false) {
-      pdsec.style = 'display: none';
-    } else {
-      pdsec.style = 'display: inline';
-    }
-  }
-
-
-  function formatHandler() {
-    clearTimeout(timeoutid);
-    updateTime();
-  }
-
-
-  function typeHandler() {
-    var cyfrowy = document.querySelector('#cyfrowy');
-    var analogowy = document.querySelector('#analogowy');
-    var ifsek = document.querySelector('#ifsekblock');
-    var pformat = document.querySelector('#format');
-    if (this.value === 'analog') {
-      cyfrowy.style = 'display: none';
-      ifsek.style = 'display: none';
-      analogowy.style = 'display: inline-block';
-      pformat.style = 'display: none';
-    } else {
-      cyfrowy.style = 'display: inline-block';
-      analogowy.style = 'display: none';
-      ifsek.style = 'display: inline-block';
-      pformat.style = 'display: inline-block';
-    }
-  }
-
-  function parseFormat(param) {
-    var resulttable = [];
-    var i;
-
-    i = param.indexOf('h');
-    if (i + 1) {
-      resulttable[i] = 'h';
-    }
-
-    i = param.indexOf('m');
-    if (i + 1) {
-      resulttable[i] = 'm';
-    }
-
-    i = param.indexOf('s');
-    if (i + 1) {
-      resulttable[i] = 's';
-    }
-
-    i = param.indexOf('p');
-    if (i + 1) {
-      resulttable[i] = 'p';
-    }
-    return resulttable;
-  }
-
-  function getSeparator(param) {
-    if (param.includes(':')) {
-      return ':';
-    }
-    if (param.includes(';')) {
-      return ';';
-    }
-    if (param.includes('.')) {
-      return '.';
-    }
-    if (param.includes('/')) {
-      return '/';
-    }
-    if (param.includes('|')) {
-      return '|';
-    }
-    if (param.includes(' ')) {
-      return ' ';
-    }
-    return '';
-  }
-
-  function getTime1(param) {
-    var date = new Date();
-    var hours = formatTest(date.getHours());
-    var mins = formatTest(date.getMinutes());
-    var secs = formatTest(date.getSeconds());
-    var msecs = formatTest(date.getMilliseconds());
-
-    if (param === '') {
-      return date.getTime();
-    } else {
-      var format = parseFormat(param);
-      if (format.length === 0) {
-        return hours + ':' + mins + ':' + secs;
-      } else {
-        var separator = getSeparator(param);
-        var result = '';
-        for (var i = 0; i < format.length; i++) {
-          switch (format[i]) {
-            case 'h':
-              result += hours + separator;
-              break;
-            case 'm':
-              result += mins + separator;
-              break;
-            case 's':
-              result += secs + separator;
-              break;
-            case 'p':
-              result += msecs + separator;
-              break;
-            default:
-              break;
-          }
-        }
-        if (separator.length === 0) {
-          return result;
-
-        } else {
-          return result.substr(0, result.length - 1);
-        }
-      }
-    }
-  }
-
-  function getTime2(input) {
-    var date = new Date();
-    var hours = formatTest(date.getHours());
-    var mins = formatTest(date.getMinutes());
-    var secs = formatTest(date.getSeconds());
-    var msecs = formatTest(date.getMilliseconds());
-    if (input.length === 0) {
-      return date.getTime();
-    } else {
-      var result = input.replace(/MM/g, mins);
-      result = result.replace(/HH/g, hours);
-      result = result.replace(/SS/g, secs);
-      result = result.replace(/MS/g, msecs);
-      return result;
-    }
-  }
-
-  function timeButton1() {
-    var pinput = document.querySelector('#gettime1').value;
-    var result = getTime1(pinput);
-    document.querySelector('#gettime1result').innerHTML = result;
-  }
-
-  function timeButton2() {
-    var pinput = document.querySelector('#gettime2').value;
-    var result = getTime2(pinput);
-    document.querySelector('#gettime2result').innerHTML = result;
-  }
-
-  function getDate1(input) {
-    var date = new Date();
-    var month = formatTest(date.getMonth() + 1);
-    var day = formatTest(date.getDate());
-    var wday = dayName(date.getDay());
-    var year = date.getFullYear().toString();
-
-    var result = input.replace(/MM/g, month);
-    result = result.replace(/DD/g, day);
-    result = result.replace(/WD/g, wday);
-    result = result.replace(/YYYY/g, year);
-    result = result.replace(/YY/g, year.substr(2, year.length));
-    return result;
-  }
-
-  function dateButton() {
-    var pinput = document.querySelector('#getdate').value;
-    var result = getDate1(pinput);
-    document.querySelector('#getdateresult').innerHTML = result;
+    ui.ctype.value = 'analog';
+    ui.showsec.addEventListener('change', ifsekHandler);
+    ui.ctype.addEventListener('change', typeHandler);
+    ui.gettimeb.addEventListener('click', timeButtonHandler);
+    updateAndDisplayTime();
   }
 
   document.addEventListener('DOMContentLoaded', main);
